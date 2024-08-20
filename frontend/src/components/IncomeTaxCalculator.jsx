@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function IncomeTaxCalculator() {
   const [inputs] = useState({
@@ -97,25 +98,6 @@ function IncomeTaxCalculator() {
     );
   };
 
-  const [form16Details, setForm16Details] = useState({
-    employeeName: "GOPURAJ RAJENDRAN MULLAI",
-    employeeNo: "8140",
-    pan: "ASMPG9144K",
-    designation: "PRODUCT DESIGNER",
-    financialYear: "2022-2023",
-    assessmentYear: "2023-2024",
-    form16Enclosed: "Yes",
-    form12BAEnclosed: "Yes",
-    taxableIncome: "₹10,24,084.00",
-    tax: "₹1,24,513.00",
-    signatureName: "SRINIVASAN ANANTHANARAYANAN",
-    signatureDate: "14-06-2023 13:28:15",
-  });
-
-  const handleUpload = () => {
-    // Logic for handling file upload
-  };
-
   const calculateGrossSalary = () => {
     const totalGrossSalary =
       inputs.basicSalary +
@@ -173,6 +155,63 @@ function IncomeTaxCalculator() {
       grossTotalIncomeNew: grossTotalIncomeNew.toFixed(2),
     };
   };
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [form16, setform16] = useState({
+    assessmentYear: "",
+    employerName: "",
+    deductorTAN: "",
+    employeeName: "",
+    employeePAN: "",
+  });
+
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setError("");
+  };
+  const uploadFile = async () => {
+    setLoading(true);
+    setError("");
+    const formData = new FormData();
+    const fieldName =
+      selectedFile.type === "application/pdf" ? "pdfFile" : "image";
+    const endpoint =
+      selectedFile.type === "application/pdf" ? "upload" : "askAboutImages";
+
+    formData.append(fieldName, selectedFile);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/${endpoint}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      setform16(response.data);
+      console.log(response.data);
+      setError("");
+    } catch (error) {
+      console.error("Error:", error);
+      setError(
+        error.response?.data?.error ||
+          "The document is not a form 16.Please try again."
+      );
+      return;
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      setError("Please select a file.");
+      return;
+    }
+    uploadFile();
+  };
 
   useEffect(() => {
     calculateIncome();
@@ -180,15 +219,25 @@ function IncomeTaxCalculator() {
 
   return (
     <div className="font-sans bg-gray-100 text-gray-800 p-5">
-      {/* Upload button */}
       <div className="flex justify-center m-5">
-        <button
-          onClick={handleUpload}
-          className="bg-gradient-to-br w-1/5 relative group/btn from-black dark:from-custom-dark dark:to-custom-dark to-neutral-600 block dark:bg-custom-dark text-white rounded-md h-10 font-medium shadow-input"
-        >
-          Upload Form 16
-          <BottomGradient />
-        </button>
+        {loading ? (
+          <div>
+            <div className="loader"></div>
+            <p>Loading...</p>
+          </div>
+        ) : (
+          <div>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            <input type="file" onChange={handleFileChange} />
+            <button
+              className="btn"
+              onClick={handleSubmit}
+              style={{ marginTop: "10px" }}
+            >
+              Upload
+            </button>
+          </div>
+        )}
       </div>
       <div className="container mx-auto max-w-5xl p-5 bg-white shadow-lg">
         <h1 className="text-center mb-5 text-gray-600">
@@ -576,69 +625,29 @@ function IncomeTaxCalculator() {
                 <td className="border p-2 font-bold text-left">
                   Employee Name
                 </td>
-                <td className="border p-2 text-left">
-                  {form16Details.employeeName}
-                </td>
-              </tr>
-              <tr>
-                <td className="border p-2 font-bold text-left">Employee No</td>
-                <td className="border p-2 text-left">
-                  {form16Details.employeeNo}
-                </td>
-              </tr>
-              <tr>
-                <td className="border p-2 font-bold text-left">PAN</td>
-                <td className="border p-2 text-left">{form16Details.pan}</td>
-              </tr>
-              <tr>
-                <td className="border p-2 font-bold text-left">Designation</td>
-                <td className="border p-2 text-left">
-                  {form16Details.designation}
-                </td>
+                <td className="border p-2 text-left">{form16.employeeName}</td>
               </tr>
               <tr>
                 <td className="border p-2 font-bold text-left">
-                  Financial Year
+                  Employer Name
                 </td>
-                <td className="border p-2 text-left">
-                  {form16Details.financialYear}
-                </td>
+                <td className="border p-2 text-left">{form16.employerName}</td>
+              </tr>
+              <tr>
+                <td className="border p-2 font-bold text-left">Employee PAN</td>
+                <td className="border p-2 text-left">{form16.employeePAN}</td>
+              </tr>
+              <tr>
+                <td className="border p-2 font-bold text-left">Deductor Tan</td>
+                <td className="border p-2 text-left">{form16.deductorTAN}</td>
               </tr>
               <tr>
                 <td className="border p-2 font-bold text-left">
                   Assessment Year
                 </td>
                 <td className="border p-2 text-left">
-                  {form16Details.assessmentYear}
+                  {form16.assessmentYear}
                 </td>
-              </tr>
-              <tr>
-                <td className="border p-2 font-bold text-left">
-                  Form No. 16 Enclosed
-                </td>
-                <td className="border p-2 text-left">
-                  {form16Details.form16Enclosed}
-                </td>
-              </tr>
-              <tr>
-                <td className="border p-2 font-bold text-left">
-                  Form No. 12BA Enclosed
-                </td>
-                <td className="border p-2 text-left">
-                  {form16Details.form12BAEnclosed}
-                </td>
-              </tr>
-              <tr>
-                <td className="border p-2 font-bold text-left">
-                  Taxable Income
-                </td>
-                <td className="border p-2 text-left">
-                  {form16Details.taxableIncome}
-                </td>
-              </tr>
-              <tr>
-                <td className="border p-2 font-bold text-left">Tax</td>
-                <td className="border p-2 text-left">{form16Details.tax}</td>
               </tr>
             </tbody>
           </table>
@@ -664,12 +673,8 @@ function IncomeTaxCalculator() {
               Caution: Please do not attempt to modify / tamper with your Form
               16. Any alteration will render the same invalid.
             </p>
-            <p className="text-gray-600 text-sm">
-              Digitally Signed by {form16Details.signatureName}
-            </p>
-            <p className="text-gray-600 text-sm">
-              Date: {form16Details.signatureDate}
-            </p>
+            <p className="text-gray-600 text-sm">Digitally Signed by</p>
+            <p className="text-gray-600 text-sm">Date:</p>
           </div>
         </div>
       </div>
