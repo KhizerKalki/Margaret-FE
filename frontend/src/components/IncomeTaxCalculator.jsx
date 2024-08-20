@@ -64,6 +64,10 @@ function IncomeTaxCalculator() {
     ).toFixed(2);
   };
 
+  const capitalizeFirstLetter = (string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1).replace(/([A-Z])/g, " $1");
+  };
+
   return (
     <div className="font-sans text-gray-800 p-5">
       {/* Upload button */}
@@ -74,7 +78,7 @@ function IncomeTaxCalculator() {
         >
           Upload Form 16
         </button>
-        <BottomGradient/>
+        <BottomGradient />
       </div>
 
       {showTables && (
@@ -100,11 +104,11 @@ function IncomeTaxCalculator() {
             <tbody>
               {Object.keys(sampleData.general).map((key) => (
                 <tr key={key}>
-                  <td className="border p-2">{key.replace(/([A-Z])/g, " $1")}</td>
+                  <td className="border p-2">{capitalizeFirstLetter(key)}</td>
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.general?.[key] || ""}
+                      value={inputs.general?.[key] === undefined ? "" : inputs.general[key] || "0"}
                       onChange={(e) => handleChange("general", key, e.target.value)}
                       className="w-full"
                     />
@@ -112,7 +116,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.monthlySalaryDetails?.[key] || ""}
+                      value={inputs.monthlySalaryDetails?.[key] === undefined ? "" : inputs.monthlySalaryDetails[key] || "0"}
                       onChange={(e) => handleChange("monthlySalaryDetails", key, e.target.value)}
                       className="w-full"
                     />
@@ -120,7 +124,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.delhi?.[key] || ""}
+                      value={inputs.delhi?.[key] === undefined ? "" : inputs.delhi[key] || "0"}
                       onChange={(e) => handleChange("delhi", key, e.target.value)}
                       className="w-full"
                     />
@@ -158,7 +162,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.taxability?.oldRegime?.[key] || ""}
+                      value={inputs.taxability?.oldRegime?.[key] === undefined ? "" : inputs.taxability.oldRegime[key] || "0"}
                       onChange={(e) =>
                         handleChange(
                           "taxability",
@@ -178,7 +182,7 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.taxability?.newRegime?.[key] || ""}
+                      value={inputs.taxability?.newRegime?.[key] === undefined ? "" : inputs.taxability.newRegime[key] || "0"}
                       onChange={(e) =>
                         handleChange(
                           "taxability",
@@ -222,11 +226,11 @@ function IncomeTaxCalculator() {
             <tbody>
               {Object.keys(sampleData.investments).map((key) => (
                 <tr key={key}>
-                  <td className="border p-2">{key.replace(/([A-Z])/g, " $1")}</td>
+                  <td className="border p-2">{capitalizeFirstLetter(key)}</td>
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.investments?.[key] || ""}
+                      value={inputs.investments?.[key] === undefined ? "" : inputs.investments[key] || "0"}
                       onChange={(e) => handleChange("investments", key, e.target.value)}
                       className="w-full"
                     />
@@ -241,72 +245,6 @@ function IncomeTaxCalculator() {
               </tr>
             </tbody>
           </table>
-
-          <h1 className="text-center mb-5 text-gray-600">Taxable Income</h1>
-          <table className="w-full border-collapse mb-5">
-            <thead>
-              <tr>
-                <th className="border p-2 text-left bg-gray-700 text-white font-bold">
-                  Old Regime
-                </th>
-                <th className="border p-2 text-left bg-gray-700 text-white font-bold">
-                  New Regime
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {Object.keys(sampleData.taxableIncome.oldRegime).map((key) => (
-                <tr key={key}>
-                  <td className="border p-2">
-                    <input
-                      type="text"
-                      value={inputs.taxableIncome?.oldRegime?.[key] || ""}
-                      onChange={(e) =>
-                        handleChange(
-                          "taxableIncome",
-                          {
-                            ...inputs.taxableIncome,
-                            oldRegime: {
-                              ...inputs.taxableIncome?.oldRegime,
-                              [key]: e.target.value,
-                            },
-                          },
-                          "oldRegime"
-                        )
-                      }
-                      className="w-full"
-                    />
-                  </td>
-                  <td className="border p-2">
-                    <input
-                      type="text"
-                      value={inputs.taxableIncome?.newRegime?.[key] || ""}
-                      onChange={(e) =>
-                        handleChange(
-                          "taxableIncome",
-                          {
-                            ...inputs.taxableIncome,
-                            newRegime: {
-                              ...inputs.taxableIncome?.newRegime,
-                              [key]: e.target.value,
-                            },
-                          },
-                          "newRegime"
-                        )
-                      }
-                      className="w-full"
-                    />
-                  </td>
-                </tr>
-              ))}
-              <tr className="bg-gray-100 font-bold text-right">
-                <td className="p-2">Net Annual Tax:</td>
-                <td className="p-2">{calculateSum("taxableIncome.oldRegime")}</td>
-                <td className="p-2">{calculateSum("taxableIncome.newRegime")}</td>
-              </tr>
-            </tbody>
-          </table>
-
           <h1 className="text-center mb-5 text-gray-600">Form 16 Details</h1>
           <div className="border p-5 bg-white shadow rounded">
             <table className="w-full border-collapse mb-5">
@@ -314,12 +252,12 @@ function IncomeTaxCalculator() {
                 {Object.keys(sampleData.form16Details).map((key) => (
                   <tr key={key}>
                     <td className="border p-2 font-bold text-left">
-                      {key.replace(/([A-Z])/g, " $1")}
+                      {capitalizeFirstLetter(key)}
                     </td>
                     <td className="border p-2 text-left">
                       <input
                         type="text"
-                        value={inputs.form16Details?.[key] || ""}
+                        value={inputs.form16Details?.[key] === undefined ? "" : inputs.form16Details[key] || "0"}
                         onChange={(e) =>
                           handleChange("form16Details", key, e.target.value)
                         }
@@ -330,6 +268,35 @@ function IncomeTaxCalculator() {
                 ))}
               </tbody>
             </table>
+
+            <div className="mt-5">
+              <p className="text-gray-600 text-sm">
+                <strong>Signature Details</strong>
+              </p>
+              <p className="text-gray-600 text-sm">
+                This form has been signed and certified using a Digital Signature
+                Certificate as specified under section 119 of the income-tax Act,
+                1961. (Please refer circular No.2/2007, dated 21-5-2007).
+              </p>
+              <p className="text-gray-600 text-sm mt-3">
+                The Digital Signature of the signatory has been affixed below. To
+                see the details and validate the signature, you should click on
+                the signature.
+              </p>
+            </div>
+
+            <div className="mt-5 text-center">
+              <p className="text-gray-600 text-sm font-bold">
+                Caution: Please do not attempt to modify / tamper with your Form
+                16. Any alteration will render the same invalid.
+              </p>
+              <p className="text-gray-600 text-sm">
+                Digitally Signed by {inputs.form16Details?.signatureName || ""}
+              </p>
+              <p className="text-gray-600 text-sm">
+                Date: {inputs.form16Details?.signatureDate || ""}
+              </p>
+            </div>
           </div>
         </div>
       )}
