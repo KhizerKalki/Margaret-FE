@@ -13,7 +13,13 @@ dotenv.config();
 
 const port = process.env.PORT || 3000;
 
-app.use(cors());
+const corsOptions = {
+  origin: "https://margaret-fe.onrender.com",
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 const uploadsDir = path.join(__dirname, "PdfUploads");
 const uploadsDirImg = path.join(__dirname, "ImgUploads");
