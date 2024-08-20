@@ -88,6 +88,34 @@ function IncomeTaxCalculator() {
     totalDeductionsCol4: 105000,
   });
 
+  const BottomGradient = () => {
+    return (
+      <>
+        <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
+        <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+      </>
+    );
+  };
+
+  const [form16Details, setForm16Details] = useState({
+    employeeName: "GOPURAJ RAJENDRAN MULLAI",
+    employeeNo: "8140",
+    pan: "ASMPG9144K",
+    designation: "PRODUCT DESIGNER",
+    financialYear: "2022-2023",
+    assessmentYear: "2023-2024",
+    form16Enclosed: "Yes",
+    form12BAEnclosed: "Yes",
+    taxableIncome: "₹10,24,084.00",
+    tax: "₹1,24,513.00",
+    signatureName: "SRINIVASAN ANANTHANARAYANAN",
+    signatureDate: "14-06-2023 13:28:15",
+  });
+
+  const handleUpload = () => {
+    // Logic for handling file upload
+  };
+
   const calculateGrossSalary = () => {
     const totalGrossSalary =
       inputs.basicSalary +
@@ -152,15 +180,33 @@ function IncomeTaxCalculator() {
 
   return (
     <div className="font-sans bg-gray-100 text-gray-800 p-5">
+      {/* Upload button */}
+      <div className="flex justify-center m-5">
+        <button
+          onClick={handleUpload}
+          className="bg-gradient-to-br w-1/5 relative group/btn from-black dark:from-custom-dark dark:to-custom-dark to-neutral-600 block dark:bg-custom-dark text-white rounded-md h-10 font-medium shadow-input"
+        >
+          Upload Form 16
+          <BottomGradient />
+        </button>
+      </div>
       <div className="container mx-auto max-w-5xl p-5 bg-white shadow-lg">
-        <h1 className="text-center mb-5 text-gray-600">Monthly Salary Details 2023 - 2024</h1>
+        <h1 className="text-center mb-5 text-gray-600">
+          Monthly Salary Details 2023 - 2024
+        </h1>
         <table className="w-full border-collapse mb-5">
           <thead>
             <tr>
-              <th className="border p-2 text-left bg-gray-700 text-white font-bold">General</th>
+              <th className="border p-2 text-left bg-gray-700 text-white font-bold">
+                General
+              </th>
               <th className="border p-2 text-left bg-gray-700 text-white font-bold"></th>
-              <th className="border p-2 text-left bg-gray-700 text-white font-bold">Monthly Salary Details 2023 - 2024</th>
-              <th className="border p-2 text-left bg-gray-700 text-white font-bold">DELHI</th>
+              <th className="border p-2 text-left bg-gray-700 text-white font-bold">
+                Monthly Salary Details 2023 - 2024
+              </th>
+              <th className="border p-2 text-left bg-gray-700 text-white font-bold">
+                DELHI
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -168,7 +214,9 @@ function IncomeTaxCalculator() {
               <td className="border p-2">Basic Salary + DA</td>
               <td className="border p-2">{inputs.basicSalary}</td>
               <td className="border p-2">Children Education Allowance *</td>
-              <td className="border p-2">{inputs.childrenEducationAllowance}</td>
+              <td className="border p-2">
+                {inputs.childrenEducationAllowance}
+              </td>
             </tr>
             <tr>
               <td className="border p-2">House Rent Allowance - HRA</td>
@@ -219,39 +267,60 @@ function IncomeTaxCalculator() {
               <td className="border p-2">{inputs.rentLocation}</td>
             </tr>
             <tr className="bg-gray-100 font-bold text-right">
-              <td colSpan="3" className="p-2">Total Monthly Gross Salary:</td>
-              <td className="p-2 text-center text-lg text-gray-700">{calculateGrossSalary()}</td>
+              <td colSpan="3" className="p-2">
+                Total Monthly Gross Salary:
+              </td>
+              <td className="p-2 text-center text-lg text-gray-700">
+                {calculateGrossSalary()}
+              </td>
             </tr>
           </tbody>
         </table>
 
-        <h1 className="text-center mb-5 text-gray-600">Taxability & Calculation as per Old and New Tax Regime</h1>
+        <h1 className="text-center mb-5 text-gray-600">
+          Taxability & Calculation as per Old and New Tax Regime
+        </h1>
         <table className="w-full border-collapse mb-5">
           <thead>
             <tr>
-              <th colSpan="2" className="border p-2 text-left bg-gray-700 text-white font-bold"></th>
-              <th className="border p-2 text-left bg-gray-700 text-white font-bold">Old Regime</th>
-              <th className="border p-2 text-left bg-gray-700 text-white font-bold">New Regime</th>
+              <th
+                colSpan="2"
+                className="border p-2 text-left bg-gray-700 text-white font-bold"
+              ></th>
+              <th className="border p-2 text-left bg-gray-700 text-white font-bold">
+                Old Regime
+              </th>
+              <th className="border p-2 text-left bg-gray-700 text-white font-bold">
+                New Regime
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr className="bg-gray-100 font-bold text-right">
-              <td colSpan="2" className="p-2">Gross Annual Salary Income (Salary + Allowances + Perks):</td>
+              <td colSpan="2" className="p-2">
+                Gross Annual Salary Income (Salary + Allowances + Perks):
+              </td>
               <td className="p-2">{inputs.grossAnnualSalaryOld}</td>
               <td className="p-2">{inputs.grossAnnualSalaryNew}</td>
             </tr>
             <tr>
-              <td colSpan="2" className="p-2">Less: Official and Reimbursement Non-Taxable Allowances *</td>
+              <td colSpan="2" className="p-2">
+                Less: Official and Reimbursement Non-Taxable Allowances *
+              </td>
               <td className="p-2">{inputs.nonTaxableAllowancesOld}</td>
               <td className="p-2">{inputs.nonTaxableAllowancesNew}</td>
             </tr>
             <tr>
-              <td colSpan="2" className="p-2">Less: Tax on Employment (Professional Tax)</td>
+              <td colSpan="2" className="p-2">
+                Less: Tax on Employment (Professional Tax)
+              </td>
               <td className="p-2">{inputs.professionalTaxOld}</td>
               <td className="p-2">{inputs.professionalTaxNew}</td>
             </tr>
             <tr>
-              <td colSpan="2" className="p-2">Less: Standard Deduction</td>
+              <td colSpan="2" className="p-2">
+                Less: Standard Deduction
+              </td>
               <td className="p-2">{inputs.standardDeductionOld}</td>
               <td className="p-2">{inputs.standardDeductionNew}</td>
             </tr>
@@ -268,39 +337,63 @@ function IncomeTaxCalculator() {
               <td className="p-2">{inputs.ltaExemptionNew}</td>
             </tr>
             <tr className="bg-gray-100 font-bold text-right">
-              <td colSpan="2" className="p-2">Income from Salary</td>
-              <td className="p-2 text-center text-lg text-gray-700">{inputs.incomeFromSalaryOld}</td>
-              <td className="p-2 text-center text-lg text-gray-700">{inputs.incomeFromSalaryNew}</td>
+              <td colSpan="2" className="p-2">
+                Income from Salary
+              </td>
+              <td className="p-2 text-center text-lg text-gray-700">
+                {inputs.incomeFromSalaryOld}
+              </td>
+              <td className="p-2 text-center text-lg text-gray-700">
+                {inputs.incomeFromSalaryNew}
+              </td>
             </tr>
             <tr>
-              <td colSpan="2" className="p-2">Less: Loss from House Property u/s(24)</td>
+              <td colSpan="2" className="p-2">
+                Less: Loss from House Property u/s(24)
+              </td>
               <td className="p-2">{inputs.lossFromHouseOld}</td>
               <td className="p-2">{inputs.lossFromHouseNew}</td>
             </tr>
             <tr>
-              <td colSpan="2" className="p-2">Add: Income from House Property</td>
+              <td colSpan="2" className="p-2">
+                Add: Income from House Property
+              </td>
               <td className="p-2">{inputs.incomeFromHouseOld}</td>
               <td className="p-2">{inputs.incomeFromHouseNew}</td>
             </tr>
             <tr>
-              <td colSpan="2" className="p-2">Add: Income from Other Sources</td>
+              <td colSpan="2" className="p-2">
+                Add: Income from Other Sources
+              </td>
               <td className="p-2">{inputs.incomeFromOtherOld}</td>
               <td className="p-2">{inputs.incomeFromOtherNew}</td>
             </tr>
             <tr className="bg-gray-100 font-bold text-right">
-              <td colSpan="2" className="p-2">Gross Total Income</td>
-              <td className="p-2 text-center text-lg text-gray-700">{inputs.grossTotalIncomeOld}</td>
-              <td className="p-2 text-center text-lg text-gray-700">{inputs.grossTotalIncomeNew}</td>
+              <td colSpan="2" className="p-2">
+                Gross Total Income
+              </td>
+              <td className="p-2 text-center text-lg text-gray-700">
+                {inputs.grossTotalIncomeOld}
+              </td>
+              <td className="p-2 text-center text-lg text-gray-700">
+                {inputs.grossTotalIncomeNew}
+              </td>
             </tr>
           </tbody>
         </table>
 
-        <h1 className="text-center mb-5 text-gray-600">Investments U/S 80C & 80CCC</h1>
+        <h1 className="text-center mb-5 text-gray-600">
+          Investments U/S 80C & 80CCC
+        </h1>
         <table className="w-full border-collapse mb-5">
           <thead>
             <tr>
-              <th className="border p-2 text-left bg-gray-700 text-white font-bold">Investment Type</th>
-              <th className="border p-2 text-left bg-gray-700 text-white font-bold">Amount</th>
+              <th className="border p-2 text-left bg-gray-700 text-white font-bold">
+                Investment Type
+              </th>
+              <th className="border p-2 text-left bg-gray-700 text-white font-bold">
+                Amount
+              </th>
               <th className="border p-2 text-left bg-gray-700 text-white font-bold"></th>
               <th className="border p-2 text-left bg-gray-700 text-white font-bold"></th>
             </tr>
@@ -337,7 +430,9 @@ function IncomeTaxCalculator() {
               <td className="border p-2"></td>
             </tr>
             <tr>
-              <td className="border p-2">Children Education Tuition Fees - CEF</td>
+              <td className="border p-2">
+                Children Education Tuition Fees - CEF
+              </td>
               <td className="border p-2">{inputs.cef}</td>
               <td className="border p-2"></td>
               <td className="border p-2"></td>
@@ -361,13 +456,17 @@ function IncomeTaxCalculator() {
               <td className="border p-2"></td>
             </tr>
             <tr>
-              <td className="border p-2">Home Loan Principal Repayment - HLP</td>
+              <td className="border p-2">
+                Home Loan Principal Repayment - HLP
+              </td>
               <td className="border p-2">{inputs.hlp}</td>
               <td className="border p-2"></td>
               <td className="border p-2"></td>
             </tr>
             <tr>
-              <td className="border p-2">Equity Linked Savings Scheme - ELSS</td>
+              <td className="border p-2">
+                Equity Linked Savings Scheme - ELSS
+              </td>
               <td className="border p-2">{inputs.elss}</td>
               <td className="border p-2"></td>
               <td className="border p-2"></td>
@@ -379,20 +478,26 @@ function IncomeTaxCalculator() {
               <td className="border p-2"></td>
             </tr>
             <tr>
-              <td className="border p-2">Stamp Duty and Registration Charges</td>
+              <td className="border p-2">
+                Stamp Duty and Registration Charges
+              </td>
               <td className="border p-2">{inputs.stampDuty}</td>
               <td className="border p-2"></td>
               <td className="border p-2"></td>
             </tr>
             <tr>
-              <td className="border p-2">Other Investments E.g. Sukanya Account</td>
+              <td className="border p-2">
+                Other Investments E.g. Sukanya Account
+              </td>
               <td className="border p-2">{inputs.otherInvestments}</td>
               <td className="border p-2"></td>
               <td className="border p-2"></td>
             </tr>
             <tr className="bg-gray-100 font-bold text-right">
               <td className="p-2">Total Investments U/S 80C & 80CCC</td>
-              <td className="p-2 text-center text-lg text-gray-700">{inputs.totalInvestments}</td>
+              <td className="p-2 text-center text-lg text-gray-700">
+                {inputs.totalInvestments}
+              </td>
               <td className="border p-2"></td>
               <td className="border p-2"></td>
             </tr>
@@ -402,7 +507,9 @@ function IncomeTaxCalculator() {
         <table className="w-full border-collapse mb-5">
           <thead>
             <tr>
-              <th className="border p-2 text-left bg-gray-700 text-white font-bold">Taxable Income</th>
+              <th className="border p-2 text-left bg-gray-700 text-white font-bold">
+                Taxable Income
+              </th>
               <td className="p-2">{inputs.taxableIncomeOld}</td>
               <td className="p-2">{inputs.taxableIncomeNew}</td>
             </tr>
@@ -445,13 +552,19 @@ function IncomeTaxCalculator() {
 
             <tr className="bg-gray-100 font-bold text-right">
               <td className="p-2">Net Annual Tax</td>
-              <td className="p-2 text-center text-lg text-gray-700">{inputs.eduCess}</td>
-              <td className="p-2 text-center text-lg text-gray-700">{inputs.eduCessNew}</td>
+              <td className="p-2 text-center text-lg text-gray-700">
+                {inputs.eduCess}
+              </td>
+              <td className="p-2 text-center text-lg text-gray-700">
+                {inputs.eduCessNew}
+              </td>
             </tr>
             <tr className="font-bold text-center bg-gray-100">
               <td className="p-2"></td>
               <td className="p-2">Save Tax as per New Slab</td>
-              <td className="p-2">{(inputs.eduCess - inputs.eduCessNew).toFixed(2)}</td>
+              <td className="p-2">
+                {(inputs.eduCess - inputs.eduCessNew).toFixed(2)}
+              </td>
             </tr>
           </tbody>
         </table>
@@ -460,44 +573,72 @@ function IncomeTaxCalculator() {
           <table className="w-full border-collapse mb-5">
             <tbody>
               <tr>
-                <td className="border p-2 font-bold text-left">Employee Name</td>
-                <td className="border p-2 text-left">GOPURAJ RAJENDRAN MULLAI</td>
+                <td className="border p-2 font-bold text-left">
+                  Employee Name
+                </td>
+                <td className="border p-2 text-left">
+                  {form16Details.employeeName}
+                </td>
               </tr>
               <tr>
                 <td className="border p-2 font-bold text-left">Employee No</td>
-                <td className="border p-2 text-left">8140</td>
+                <td className="border p-2 text-left">
+                  {form16Details.employeeNo}
+                </td>
               </tr>
               <tr>
                 <td className="border p-2 font-bold text-left">PAN</td>
-                <td className="border p-2 text-left">ASMPG9144K</td>
+                <td className="border p-2 text-left">{form16Details.pan}</td>
               </tr>
               <tr>
                 <td className="border p-2 font-bold text-left">Designation</td>
-                <td className="border p-2 text-left">PRODUCT DESIGNER</td>
+                <td className="border p-2 text-left">
+                  {form16Details.designation}
+                </td>
               </tr>
               <tr>
-                <td className="border p-2 font-bold text-left">Financial Year</td>
-                <td className="border p-2 text-left">2022-2023</td>
+                <td className="border p-2 font-bold text-left">
+                  Financial Year
+                </td>
+                <td className="border p-2 text-left">
+                  {form16Details.financialYear}
+                </td>
               </tr>
               <tr>
-                <td className="border p-2 font-bold text-left">Assessment Year</td>
-                <td className="border p-2 text-left">2023-2024</td>
+                <td className="border p-2 font-bold text-left">
+                  Assessment Year
+                </td>
+                <td className="border p-2 text-left">
+                  {form16Details.assessmentYear}
+                </td>
               </tr>
               <tr>
-                <td className="border p-2 font-bold text-left">Form No. 16 Enclosed</td>
-                <td className="border p-2 text-left">Yes</td>
+                <td className="border p-2 font-bold text-left">
+                  Form No. 16 Enclosed
+                </td>
+                <td className="border p-2 text-left">
+                  {form16Details.form16Enclosed}
+                </td>
               </tr>
               <tr>
-                <td className="border p-2 font-bold text-left">Form No. 12BA Enclosed</td>
-                <td className="border p-2 text-left">Yes</td>
+                <td className="border p-2 font-bold text-left">
+                  Form No. 12BA Enclosed
+                </td>
+                <td className="border p-2 text-left">
+                  {form16Details.form12BAEnclosed}
+                </td>
               </tr>
               <tr>
-                <td className="border p-2 font-bold text-left">Taxable Income</td>
-                <td className="border p-2 text-left">₹10,24,084.00</td>
+                <td className="border p-2 font-bold text-left">
+                  Taxable Income
+                </td>
+                <td className="border p-2 text-left">
+                  {form16Details.taxableIncome}
+                </td>
               </tr>
               <tr>
                 <td className="border p-2 font-bold text-left">Tax</td>
-                <td className="border p-2 text-left">₹1,24,513.00</td>
+                <td className="border p-2 text-left">{form16Details.tax}</td>
               </tr>
             </tbody>
           </table>
@@ -507,22 +648,27 @@ function IncomeTaxCalculator() {
               <strong>Signature Details</strong>
             </p>
             <p className="text-gray-600 text-sm">
-              This form has been signed and certified using a Digital Signature Certificate as specified under section 119 of the income-tax Act, 1961. (Please refer circular No.2/2007, dated 21-5-2007).
+              This form has been signed and certified using a Digital Signature
+              Certificate as specified under section 119 of the income-tax Act,
+              1961. (Please refer circular No.2/2007, dated 21-5-2007).
             </p>
             <p className="text-gray-600 text-sm mt-3">
-              The Digital Signature of the signatory has been affixed below. To see the details and validate the signature, you should click on the signature.
+              The Digital Signature of the signatory has been affixed below. To
+              see the details and validate the signature, you should click on
+              the signature.
             </p>
           </div>
 
           <div className="mt-5 text-center">
             <p className="text-gray-600 text-sm font-bold">
-              Caution: Please do not attempt to modify / tamper with your Form 16. Any alteration will render the same invalid.
+              Caution: Please do not attempt to modify / tamper with your Form
+              16. Any alteration will render the same invalid.
             </p>
             <p className="text-gray-600 text-sm">
-              Digitally Signed by SRINIVASAN ANANTHANARAYANAN
+              Digitally Signed by {form16Details.signatureName}
             </p>
             <p className="text-gray-600 text-sm">
-              Date: 14-06-2023 13:28:15
+              Date: {form16Details.signatureDate}
             </p>
           </div>
         </div>

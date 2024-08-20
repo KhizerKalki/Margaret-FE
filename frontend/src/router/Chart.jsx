@@ -20,9 +20,9 @@ const Chart = () => {
                   <span className='h-[1px] mt-4 flex-1 bg-gray-200'></span>
                   <span className='h-[1px] mt-4 flex-1 bg-gray-200'></span>
                 </span>
-                <div >
+                {/* <div >
                   <ChatBot />
-                </div>
+                </div> */}
                 <div>
                   <IncomeTaxCalculator/>
                 </div>
