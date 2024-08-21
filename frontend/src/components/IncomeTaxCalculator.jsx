@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { sampleData } from "../../SampleDB/sampleData";
+import axios from "axios";
 
 function IncomeTaxCalculator() {
-  const [inputs, setInputs] = useState({});
+  const [inputs, setInputs] = useState(sampleData);
   const [showTables, setShowTables] = useState(false);
 
   const BottomGradient = () => {
@@ -13,11 +14,56 @@ function IncomeTaxCalculator() {
       </>
     );
   };
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleUpload = () => {
-    // Simulate fetching data, in a real scenario, this might involve reading a file or fetching from an API
-    setInputs(sampleData);
-    setShowTables(true);
+  const handleFileChange = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setError("");
+  };
+  const uploadFile = async () => {
+    setLoading(true);
+    setError("");
+    const formData = new FormData();
+    const fieldName =
+      selectedFile.type === "application/pdf" ? "pdfFile" : "image";
+    const endpoint =
+      selectedFile.type === "application/pdf" ? "upload" : "askAboutImages";
+
+    formData.append(fieldName, selectedFile);
+    console.log(formData);
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/${endpoint}`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+
+      setInputs(response.data);
+      console.log(response.data);
+      setError("");
+    } catch (error) {
+      console.error("Error:", error);
+      setError(
+        error.response?.data?.error ||
+          "The document is not a form 16.Please try again."
+      );
+      return;
+    } finally {
+      setLoading(false);
+      setShowTables(true);
+    }
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      setError("Please select a file.");
+      return;
+    }
+    uploadFile();
   };
 
   const handleChange = (section, key, value) => {
@@ -61,24 +107,42 @@ function IncomeTaxCalculator() {
       lossFromHouse +
       incomeFromHouse +
       incomeFromOther
-    ).toFixed(2);
+    );
   };
 
   const capitalizeFirstLetter = (string) => {
-    return string.charAt(0).toUpperCase() + string.slice(1).replace(/([A-Z])/g, " $1");
+    return (
+      string.charAt(0).toUpperCase() +
+      string.slice(1).replace(/([A-Z])/g, " $1")
+    );
   };
 
   return (
     <div className="font-sans text-gray-800 p-5">
-      {/* Upload button */}
       <div className="flex justify-center m-5">
-        <button
-          onClick={handleUpload}
-          className="bg-gradient-to-br w-1/5 relative group/btn from-black to-neutral-600 block text-white rounded-md h-10 font-medium shadow-input"
-        >
-          Upload Form 16
-        </button>
-        <BottomGradient />
+        {loading ? (
+          <div>
+            <div className="flex-col gap-4 w-full flex items-center justify-center">
+              <div className="w-20 h-20 border-4 border-transparent text-blue-400 text-4xl animate-spin flex items-center justify-center border-t-blue-400 rounded-full">
+                <div className="w-16 h-16 border-4 border-transparent text-red-400 text-2xl animate-spin flex items-center justify-center border-t-red-400 rounded-full"></div>
+              </div>
+            </div>
+            <p>Loading</p>
+          </div>
+        ) : (
+          <div>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            <input type="file" onChange={handleFileChange} />
+            <button
+              className="btn"
+              onClick={handleSubmit}
+              style={{ marginTop: "10px" }}
+            >
+              Upload
+            </button>
+            <BottomGradient />
+          </div>
+        )}
       </div>
 
       {showTables && (
@@ -108,24 +172,46 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.general?.[key] === undefined ? "" : inputs.general[key] || "0"}
-                      onChange={(e) => handleChange("general", key, e.target.value)}
+                      value={
+                        inputs.general?.[key] === undefined
+                          ? ""
+                          : inputs.general[key] || "0"
+                      }
+                      onChange={(e) =>
+                        handleChange("general", key, e.target.value)
+                      }
                       className="w-full"
                     />
                   </td>
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.monthlySalaryDetails?.[key] === undefined ? "" : inputs.monthlySalaryDetails[key] || "0"}
-                      onChange={(e) => handleChange("monthlySalaryDetails", key, e.target.value)}
+                      value={
+                        inputs.monthlySalaryDetails?.[key] === undefined
+                          ? ""
+                          : inputs.monthlySalaryDetails[key] || "0"
+                      }
+                      onChange={(e) =>
+                        handleChange(
+                          "monthlySalaryDetails",
+                          key,
+                          e.target.value
+                        )
+                      }
                       className="w-full"
                     />
                   </td>
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.delhi?.[key] === undefined ? "" : inputs.delhi[key] || "0"}
-                      onChange={(e) => handleChange("delhi", key, e.target.value)}
+                      value={
+                        inputs.delhi?.[key] === undefined
+                          ? ""
+                          : inputs.delhi[key] || "0"
+                      }
+                      onChange={(e) =>
+                        handleChange("delhi", key, e.target.value)
+                      }
                       className="w-full"
                     />
                   </td>
@@ -162,7 +248,11 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.taxability?.oldRegime?.[key] === undefined ? "" : inputs.taxability.oldRegime[key] || "0"}
+                      value={
+                        inputs.taxability?.oldRegime?.[key] === undefined
+                          ? ""
+                          : inputs.taxability.oldRegime[key] || "0"
+                      }
                       onChange={(e) =>
                         handleChange(
                           "taxability",
@@ -182,7 +272,11 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.taxability?.newRegime?.[key] === undefined ? "" : inputs.taxability.newRegime[key] || "0"}
+                      value={
+                        inputs.taxability?.newRegime?.[key] === undefined
+                          ? ""
+                          : inputs.taxability.newRegime[key] || "0"
+                      }
                       onChange={(e) =>
                         handleChange(
                           "taxability",
@@ -203,8 +297,12 @@ function IncomeTaxCalculator() {
               ))}
               <tr className="bg-gray-100 font-bold text-right">
                 <td className="p-2">Income from Salary:</td>
-                <td className="p-2">{calculateIncomeFromSalary("oldRegime")}</td>
-                <td className="p-2">{calculateIncomeFromSalary("newRegime")}</td>
+                <td className="p-2">
+                  {calculateIncomeFromSalary("oldRegime")}
+                </td>
+                <td className="p-2">
+                  {calculateIncomeFromSalary("newRegime")}
+                </td>
               </tr>
             </tbody>
           </table>
@@ -230,8 +328,14 @@ function IncomeTaxCalculator() {
                   <td className="border p-2">
                     <input
                       type="text"
-                      value={inputs.investments?.[key] === undefined ? "" : inputs.investments[key] || "0"}
-                      onChange={(e) => handleChange("investments", key, e.target.value)}
+                      value={
+                        inputs.investments?.[key] === undefined
+                          ? ""
+                          : inputs.investments[key] || "0"
+                      }
+                      onChange={(e) =>
+                        handleChange("investments", key, e.target.value)
+                      }
                       className="w-full"
                     />
                   </td>
@@ -257,7 +361,11 @@ function IncomeTaxCalculator() {
                     <td className="border p-2 text-left">
                       <input
                         type="text"
-                        value={inputs.form16Details?.[key] === undefined ? "" : inputs.form16Details[key] || "0"}
+                        value={
+                          inputs.form16Details?.[key] === undefined
+                            ? ""
+                            : inputs.form16Details[key] || "0"
+                        }
                         onChange={(e) =>
                           handleChange("form16Details", key, e.target.value)
                         }
@@ -274,14 +382,15 @@ function IncomeTaxCalculator() {
                 <strong>Signature Details</strong>
               </p>
               <p className="text-gray-600 text-sm">
-                This form has been signed and certified using a Digital Signature
-                Certificate as specified under section 119 of the income-tax Act,
-                1961. (Please refer circular No.2/2007, dated 21-5-2007).
+                This form has been signed and certified using a Digital
+                Signature Certificate as specified under section 119 of the
+                income-tax Act, 1961. (Please refer circular No.2/2007, dated
+                21-5-2007).
               </p>
               <p className="text-gray-600 text-sm mt-3">
-                The Digital Signature of the signatory has been affixed below. To
-                see the details and validate the signature, you should click on
-                the signature.
+                The Digital Signature of the signatory has been affixed below.
+                To see the details and validate the signature, you should click
+                on the signature.
               </p>
             </div>
 
