@@ -9,16 +9,16 @@ export const sampleData = {
     lta: 0,
     mealAllowance: 0,
     npsContribution: 0,
+  },
+  monthlySalaryDetails: {
+    grossAnnualSalaryOld: 0,
+    grossAnnualSalaryNew: 0,
     childrenEducationAllowance: 0,
     hostelAllowance: 0,
     washingAllowance: 0,
     uniformAllowance: 0,
     otherReimbursements: 0,
     otherAllowances: 0,
-  },
-  monthlySalaryDetails: {
-    grossAnnualSalaryOld: 0,
-    grossAnnualSalaryNew: 0,
   },
   taxability: {
     oldRegime: {

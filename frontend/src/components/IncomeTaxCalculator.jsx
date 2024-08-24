@@ -6,14 +6,13 @@ function IncomeTaxCalculator() {
   const [inputs, setInputs] = useState(sampleData);
   const [showTables, setShowTables] = useState(false);
 
-  const BottomGradient = () => {
-    return (
-      <>
-        <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-        <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
-      </>
-    );
-  };
+  const BottomGradient = () => (
+    <>
+      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
+      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+    </>
+  );
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -22,6 +21,7 @@ function IncomeTaxCalculator() {
     setSelectedFile(event.target.files[0]);
     setError("");
   };
+
   const uploadFile = async () => {
     setLoading(true);
     setError("");
@@ -49,7 +49,7 @@ function IncomeTaxCalculator() {
       console.error("Error:", error);
       setError(
         error.response?.data?.error ||
-          "The document is not a form 16.Please try again."
+          "The document is not a form 16. Please try again."
       );
       return;
     } finally {
@@ -57,6 +57,7 @@ function IncomeTaxCalculator() {
       setShowTables(true);
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedFile) {
@@ -166,6 +167,7 @@ function IncomeTaxCalculator() {
               </tr>
             </thead>
             <tbody>
+              {/* General Section */}
               {Object.keys(sampleData.general).map((key) => (
                 <tr key={key}>
                   <td className="border p-2">{capitalizeFirstLetter(key)}</td>
@@ -183,6 +185,16 @@ function IncomeTaxCalculator() {
                       className="w-full"
                     />
                   </td>
+                  <td className="border p-2"></td> {/* Empty column for Monthly Salary Details */}
+                  <td className="border p-2"></td> {/* Empty column for DELHI */}
+                </tr>
+              ))}
+
+              {/* Monthly Salary Details Section */}
+              {Object.keys(sampleData.monthlySalaryDetails).map((key) => (
+                <tr key={key}>
+                  <td className="border p-2"></td> {/* Empty column for General */}
+                  <td className="border p-2"></td> {/* Empty column for General */}
                   <td className="border p-2">
                     <input
                       type="text"
@@ -192,31 +204,15 @@ function IncomeTaxCalculator() {
                           : inputs.monthlySalaryDetails[key] || "0"
                       }
                       onChange={(e) =>
-                        handleChange(
-                          "monthlySalaryDetails",
-                          key,
-                          e.target.value
-                        )
+                        handleChange("monthlySalaryDetails", key, e.target.value)
                       }
                       className="w-full"
                     />
                   </td>
-                  <td className="border p-2">
-                    <input
-                      type="text"
-                      value={
-                        inputs.delhi?.[key] === undefined
-                          ? ""
-                          : inputs.delhi[key] || "0"
-                      }
-                      onChange={(e) =>
-                        handleChange("delhi", key, e.target.value)
-                      }
-                      className="w-full"
-                    />
-                  </td>
+                  <td className="border p-2"></td> {/* Empty column for DELHI */}
                 </tr>
               ))}
+
               <tr className="bg-gray-100 font-bold text-right">
                 <td colSpan="3" className="p-2">
                   Total Monthly Gross Salary:
@@ -237,6 +233,7 @@ function IncomeTaxCalculator() {
                 <th className="border p-2 text-left bg-gray-700 text-white font-bold">
                   Old Regime
                 </th>
+                <th className="border p-2 text-left bg-gray-700 text-white font-bold"></th>
                 <th className="border p-2 text-left bg-gray-700 text-white font-bold">
                   New Regime
                 </th>
@@ -245,6 +242,7 @@ function IncomeTaxCalculator() {
             <tbody>
               {Object.keys(sampleData.taxability.oldRegime).map((key) => (
                 <tr key={key}>
+                  <td className="border p-2">{capitalizeFirstLetter(key)}</td>
                   <td className="border p-2">
                     <input
                       type="text"
@@ -269,6 +267,7 @@ function IncomeTaxCalculator() {
                       className="w-full"
                     />
                   </td>
+                  <td className="border p-2">{capitalizeFirstLetter(key)}</td>
                   <td className="border p-2">
                     <input
                       type="text"
@@ -300,6 +299,7 @@ function IncomeTaxCalculator() {
                 <td className="p-2">
                   {calculateIncomeFromSalary("oldRegime")}
                 </td>
+                <td className="p-2">Income from Salary:</td>
                 <td className="p-2">
                   {calculateIncomeFromSalary("newRegime")}
                 </td>
@@ -308,33 +308,69 @@ function IncomeTaxCalculator() {
           </table>
 
           <h1 className="text-center mb-5 text-gray-600">
-            Investments U/S 80C & 80CCC
+            Taxable Income as per Old and New Tax Regime
           </h1>
           <table className="w-full border-collapse mb-5">
             <thead>
               <tr>
                 <th className="border p-2 text-left bg-gray-700 text-white font-bold">
-                  Investment Type
+                  Old Regime
                 </th>
+                <th className="border p-2 text-left bg-gray-700 text-white font-bold"></th>
                 <th className="border p-2 text-left bg-gray-700 text-white font-bold">
-                  Amount
+                  New Regime
                 </th>
               </tr>
             </thead>
             <tbody>
-              {Object.keys(sampleData.investments).map((key) => (
+              {Object.keys(sampleData.taxableIncome.oldRegime).map((key) => (
                 <tr key={key}>
                   <td className="border p-2">{capitalizeFirstLetter(key)}</td>
                   <td className="border p-2">
                     <input
                       type="text"
                       value={
-                        inputs.investments?.[key] === undefined
+                        inputs.taxableIncome?.oldRegime?.[key] === undefined
                           ? ""
-                          : inputs.investments[key] || "0"
+                          : inputs.taxableIncome.oldRegime[key] || "0"
                       }
                       onChange={(e) =>
-                        handleChange("investments", key, e.target.value)
+                        handleChange(
+                          "taxableIncome",
+                          {
+                            ...inputs.taxableIncome,
+                            oldRegime: {
+                              ...inputs.taxableIncome?.oldRegime,
+                              [key]: e.target.value,
+                            },
+                          },
+                          "oldRegime"
+                        )
+                      }
+                      className="w-full"
+                    />
+                  </td>
+                  <td className="border p-2">{capitalizeFirstLetter(key)}</td>
+                  <td className="border p-2">
+                    <input
+                      type="text"
+                      value={
+                        inputs.taxableIncome?.newRegime?.[key] === undefined
+                          ? ""
+                          : inputs.taxableIncome.newRegime[key] || "0"
+                      }
+                      onChange={(e) =>
+                        handleChange(
+                          "taxableIncome",
+                          {
+                            ...inputs.taxableIncome,
+                            newRegime: {
+                              ...inputs.taxableIncome?.newRegime,
+                              [key]: e.target.value,
+                            },
+                          },
+                          "newRegime"
+                        )
                       }
                       className="w-full"
                     />
@@ -342,13 +378,18 @@ function IncomeTaxCalculator() {
                 </tr>
               ))}
               <tr className="bg-gray-100 font-bold text-right">
-                <td className="p-2">Total Investments U/S 80C & 80CCC</td>
-                <td className="p-2 text-center text-lg text-gray-700">
-                  {calculateSum("investments")}
+                <td className="p-2">Net Annual Tax:</td>
+                <td className="p-2">
+                  {calculateSum("taxableIncome.oldRegime")}
+                </td>
+                <td className="p-2">Net Annual Tax:</td>
+                <td className="p-2">
+                  {calculateSum("taxableIncome.newRegime")}
                 </td>
               </tr>
             </tbody>
           </table>
+
           <h1 className="text-center mb-5 text-gray-600">Form 16 Details</h1>
           <div className="border p-5 bg-white shadow rounded">
             <table className="w-full border-collapse mb-5">
